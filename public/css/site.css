@@ -1,0 +1,8 @@
+body, html {
+  -webkit-font-smoothing: antialiased;
+  height: 100%;
+}
+
+#app {
+  padding-top: 25px;
+}
