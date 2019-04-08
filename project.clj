@@ -9,7 +9,8 @@
                  [reagent "0.8.1"]]
 
   :plugins [[lein-cljsbuild "1.1.7"]
-            [lein-figwheel "0.5.18"]]
+            [lein-figwheel "0.5.18"]
+            [lein-doo "0.1.10"]]
 
   :clean-targets ^{:protect false}
 [:target-path
@@ -22,6 +23,8 @@
              :nrepl-port 7002
              :nrepl-middleware [cider.piggieback/wrap-cljs-repl]
              :css-dirs ["public/css"]}
+
+  :doo {:paths {:karma "./node_modules/karma/bin/karma"}}
 
   :cljsbuild {:builds {:app
                        {:source-paths ["src" "env/dev/cljs"]
@@ -38,7 +41,7 @@
                          :open-urls ["http://localhost:3449/index.html"]}}
                        :devcards
                        {:id "devcards"
-                        :source-paths ["src"]
+                        :source-paths ["src" "devcards"]
                         :figwheel {:devcards true
                                    :open-urls ["http://localhost:3450/cards.html"]}
                         :compiler {:main "code-up-clojurescript/devcards/core"
@@ -53,16 +56,25 @@
                          :output-dir "public/js/release"
                          :optimizations :advanced
                          :infer-externs true
-                         :pretty-print false}}}}
+                         :pretty-print false}}
+                       :test
+                       {:id "test"
+                        :source-paths ["src" "test"]
+                        :compiler {:output-to "public/js/testable.js"
+                                   :output-dir "public/js/tests_out"
+                                   :asset-path "public/js/tests_out"
+                                   :main code-up-clojurescript.runner
+                                   :optimizations :none}}}}
 
-  :aliases {"package" ["do" "clean" ["cljsbuild" "once" "release"]]
-            "devcards" ["with-profile" "+devcards" "figwheel" "devcards"]}
+              :aliases {"package" ["do" "clean" ["cljsbuild" "once" "release"]]
+                        "devcards" ["with-profile" "+devcards" "figwheel" "devcards"]}
 
-  :profiles {:dev {:source-paths ["src" "env/dev/clj"]
-                   :dependencies [[binaryage/devtools "0.9.10"]
-                                  [figwheel-sidecar "0.5.18"]
-                                  [nrepl "0.6.0"]
-                                  [cider/piggieback "0.4.0"]
-                                  [devcards "0.2.6"]]}
-             :devcards {:figwheel {:server-port 3450
-                                   :nrepl-port 7001}}})
+              :profiles {:dev {:source-paths ["src" "env/dev/clj"]
+                               :dependencies [[binaryage/devtools "0.9.10"]
+                                              [figwheel-sidecar "0.5.18"]
+                                              [nrepl "0.6.0"]
+                                              [cider/piggieback "0.4.0"]
+                                              [devcards "0.2.6"]]}
+                         :devcards {:figwheel {:server-port 3450
+                                               :nrepl-port 7001}
+                                    :source-paths ["src" "devcards"]}})
